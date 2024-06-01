@@ -7,6 +7,8 @@ import co.aikar.idb.PooledDatabaseOptions;
 import me.makkuusen.timing.system.TimingSystem;
 import me.makkuusen.timing.system.TimingSystemConfiguration;
 
+import java.util.HashMap;
+
 public class MariaDBDatabase extends MySQLDatabase {
     @Override
     public boolean initialize() {
@@ -14,7 +16,11 @@ public class MariaDBDatabase extends MySQLDatabase {
         String hostAndPort = config.getSqlHost() + ":" + config.getSqlPort();
 
         PooledDatabaseOptions options = BukkitDB.getRecommendedOptions(TimingSystem.getPlugin(), config.getSqlUsername(), config.getSqlPassword(), config.getSqlDatabase(), hostAndPort);
-        options.getOptions().setDsn("mysql://" + hostAndPort + "/" + config.getSqlDatabase());
+
+        //Fix invalid MariaDB Options
+        options.getOptions().setDsn("mariadb://" + hostAndPort + "/" + config.getSqlDatabase());
+        //End Fix
+
         options.setMinIdleConnections(5);
         options.setMaxConnections(5);
         co.aikar.idb.Database db = new HikariPooledDatabase(options);
